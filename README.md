@@ -26,7 +26,7 @@ The cart, quantities, bundle pricing, plan selection, gallery, menu and accordio
 
 ## Validation
 
-`node scripts/interactions.mjs` exercises bundles, cart persistence, FAQ expansion and mobile navigation. `node scripts/check-pages.mjs` captures all three pages at 1440px and 390px and reports runtime errors and missing images. Start the dev server on port 5173 first. Additional responsive checks cover 320px–1920px.
+`node scripts/interactions.mjs` exercises bundles, cart persistence, FAQ expansion and mobile navigation. `node scripts/check-pages.mjs` captures all three pages at 1440px and 390px and reports runtime errors and missing images. Start the dev server on port 5173 first. `node scripts/check-responsive.mjs` checks all three routes at eight widths from 320px to 3440px, including full-width surfaces, footer overlap, missing images and runtime errors. Set `CHECK_URL` to check a deployed site.
 
 ## Design sources
 
@@ -35,3 +35,7 @@ Homepage: `145:3` / `145:1427`; collection: `145:2661` / `145:4401`; product: `1
 The optional design preparation scripts require the original, uncommitted MCP export files in `design-reference/`. They are not part of the application build.
 
 See [ASSET_NOTES.md](ASSET_NOTES.md) for the image editing process and outputs.
+
+## Responsive layout
+
+The page shell and promotional backgrounds fill the viewport. The homepage hero, social section and shared footer use native responsive layouts in `src/responsive.jsx` and `src/responsive.css`; the footer stacks into a two-column link grid on smaller screens. Exported sections retain their design geometry inside fluid content containers, capped at 1920px for readability. Collection content uses a wider 1760px container. The header keeps a readable navigation size independently of page scaling.
