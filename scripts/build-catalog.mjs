@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+const rows=JSON.parse(fs.readFileSync('design-reference/catalog-extract.json'));
+const copy=JSON.parse(fs.readFileSync('design-reference/product-copy-extract.json'));
+const homeCopy=JSON.parse(fs.readFileSync('design-reference/home-product-copy.json'));
+const slug=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const labels={'protein-coffee':'Protein Coffee',refreshers:'Protein Refreshers',concentrates:'Coffee Concentrate',creamers:'Protein Creamer',syrups:'Coffee Syrup',accessories:'Accessories'};
+const products=rows.map(r=>{
+ const stop=r.paragraphs.findIndex(t=>/^(Add|Sold Out|Subscribe)$/.test(t));
+ let name=r.paragraphs.slice(0,stop).filter(t=>!/^✪|^\([\d,]+\)$/.test(t)).join(' ').trim();
+ if(r.category==='concentrates')name+=' Coffee Concentrate';
+ const baseName=name.replace(/ (Protein Coffee|Protein Refresher|Coffee Concentrate|Protein Creamer|Coffee Syrup)s?$/,'');
+ const desc=r.category==='protein-coffee'&&copy.product.find(x=>slug(x.text[0])===slug(baseName));
+ const home=homeCopy.find(x=>x.id===slug(name));
+ let description=desc?desc.text.slice(1,desc.text.indexOf('-')).join(' '):home?home.text.slice(1,-1).join(' '):'';
+ if(/\.\.\.|…/.test(description))description='';
+ const imageKey=r.image.match(/savvy-\d+-/)?.[0];
+ const variants=imageKey?fs.readdirSync('public/assets').filter(f=>f.startsWith(imageKey)).map(f=>({f,w:Number(f.match(/-(\d+)x\d+\.webp/)?.[1]||0)})).sort((a,b)=>b.w-a.w):[];
+ return {id:slug(name),name,flavor:baseName,category:r.category,categoryLabel:labels[r.category],description:description||`${name} from the Savvy ${labels[r.category]} collection.`,price:r.price===null?null:Number(r.price),soldOut:r.soldOut,subscriptionOnly:r.paragraphs.includes('Subscribe'),image:r.image,detailImage:fs.existsSync('public/assets/'+imageKey+'detail.webp')?'/assets/'+imageKey+'detail.webp':variants[0]?'/assets/'+variants[0].f:r.image,imageKey:imageKey||r.image,sourceNode:r.node,badge:r.paragraphs.find(t=>/NEW|LIMITED RELEASE|20% OFF/.test(t))?.replace('✪ ','')||null};
+});
+fs.writeFileSync('src/catalog.json',JSON.stringify(products,null,2));console.log(products.length,'products',new Set(products.map(p=>p.id)).size,'unique routes');

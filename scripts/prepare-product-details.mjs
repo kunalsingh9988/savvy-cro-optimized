@@ -1,0 +1,4 @@
+import fs from 'node:fs';import sharp from 'sharp';
+const completed=JSON.parse(fs.readFileSync('design-reference/rebrand-completed.json'));const log=fs.readFileSync('design-reference/rebrand-log.jsonl','utf8').trim().split('\n').filter(Boolean).map(x=>JSON.parse(x));const jobs=new Map([...completed,...log].map(j=>[j.index,j]));const catalog=JSON.parse(fs.readFileSync('src/catalog.json'));let count=0;
+for(const p of catalog){const index=Number(p.imageKey.match(/savvy-(\d+)-/)?.[1]);const job=jobs.get(index);if(!job)continue;const file=`/assets/savvy-${index}-detail.webp`;await sharp(job.path).resize({width:1200,height:1200,fit:'inside',withoutEnlargement:true}).webp({quality:96,alphaQuality:100}).toFile('public'+file);p.detailImage=file;count++;}
+fs.writeFileSync('src/catalog.json',JSON.stringify(catalog,null,2));console.log(count,'high-resolution product detail images installed');

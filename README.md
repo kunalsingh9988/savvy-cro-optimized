@@ -1,6 +1,6 @@
 # Savvy Coffee
 
-Responsive recreation of the supplied Figma homepage, collection and product page, with Savvy branding and edited product photography.
+Responsive Savvy storefront based on the supplied Figma designs, with a shared product template, 65 individual product pages and connected information-page navigation.
 
 ## Run locally
 
@@ -17,14 +17,20 @@ npm run preview
 ## Pages
 
 - `/` — homepage
-- `/collections/all` — full collection with category anchors
-- `/products/protein-coffee` — product page and bundle builder
+- `/collections/all` — original full collection
+- `/collections/:category` — searchable, sortable category pages
+- `/products/protein-coffee` — Figma Protein Coffee bundle builder
+- `/products/:product-id` — shared product template for all 65 catalog products
+- `/pages/*`, `/policies/*`, `/account*`, `/checkout`, `/blogs/coffee/*` — footer, service and editorial pages
 
-Desktop and mobile layouts follow the six supplied frames in [Figma](https://www.figma.com/design/AMGvH2mTSt0AeSq80xlqOb/From-X-to-Figma). Typography and artwork are served locally. Sections are loaded as separate bundles.
+`src/catalog.json` contains the product data. `src/commerce.jsx` is the shared product and collection template; `src/routes.js` maps navigation; `src/content-pages.jsx` and `src/content-data.js` provide the information pages. Protein Coffee detail pages reuse the Figma feature sections. Typography and images are served locally, with high-resolution detail images for every product.
 
-The cart, quantities, bundle pricing, plan selection, gallery, menu and accordions work in the browser. Cart contents persist on the device. Checkout, account, newsletter submission and video playback are demonstration interfaces; no commerce backend or video files were supplied. Prices, reviews and promotional claims reproduce the supplied design, and are not live commerce data.
+The cart, quantities, bundle pricing, plan selection, image enlargement, menu and accordions work in the browser. Cart contents persist on the device. Support forms and checkout provide explicitly local downloads. Payments, authentication, messaging and other live business services require approved connections; legal and business pages clearly identify missing approved content. See [QA.md](QA.md) for the full coverage and launch boundaries.
 
 ## Validation
+
+`node scripts/qa-site.mjs` checks all 98 routes at desktop/mobile widths. `node scripts/qa-interactions.mjs` checks product links, prices, cart persistence, filters, forms and navigation.
+
 
 `node scripts/interactions.mjs` exercises bundles, cart persistence, FAQ expansion and mobile navigation. `node scripts/check-pages.mjs` captures all three pages at 1440px and 390px and reports runtime errors and missing images. Start the dev server on port 5173 first. `node scripts/check-responsive.mjs` checks all three routes at eight widths from 320px to 3440px, including full-width surfaces, footer overlap, missing images and runtime errors. Set `CHECK_URL` to check a deployed site.
 
@@ -39,3 +45,5 @@ See [ASSET_NOTES.md](ASSET_NOTES.md) for the image editing process and outputs.
 ## Responsive layout
 
 The page shell and promotional backgrounds fill the viewport. The homepage hero, social section and shared footer use native responsive layouts in `src/responsive.jsx` and `src/responsive.css`; the footer stacks into a two-column link grid on smaller screens. Exported sections retain their design geometry inside fluid content containers, capped at 1920px for readability. Collection content uses a wider 1760px container. The header keeps a readable navigation size independently of page scaling.
+
+Optional catalog preparation scripts (`extract-catalog.mjs`, `build-catalog.mjs`, `prepare-product-details.mjs`) use ignored design-reference inputs. Normal builds use the committed catalog and image files and need no Figma connection or image-generation credentials.

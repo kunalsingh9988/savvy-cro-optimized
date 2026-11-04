@@ -1,9 +1,10 @@
 import React, {useContext} from 'react';
 import {Brand, DesignImage, ShopContext} from './ui';
+import {destinationFor} from './routes';
 
 function SiteLink({to,children,...props}) {
-  const {navigate,openInfo}=useContext(ShopContext);
-  return <a href={to||'#'} {...props} onClick={e=>{e.preventDefault();to?navigate(to):openInfo(typeof children==='string'?children:'Savvy')}}>{children}</a>;
+  const {navigate}=useContext(ShopContext);const href=to||destinationFor(typeof children==='string'?children:'Home');
+  return <a href={href} {...props} onClick={e=>{if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();navigate(href)}}>{children}</a>;
 }
 
 export function WideHero(){
@@ -27,9 +28,9 @@ export function SocialSection(){return <div className="social-section">
 </div>}
 
 const groups=[
-  ['Shop', [['Build Your Bundle','/products/protein-coffee'],['Coffee Concentrate','/collections/all#concentrates'],['Protein Coffee','/products/protein-coffee'],['Accessories','/collections/all#accessories'],['Subscribe & Save','/products/protein-coffee']]],
+  ['Shop', [['Build Your Bundle','/products/protein-coffee'],['Coffee Concentrate','/collections/all#concentrates'],['Protein Coffee','/products/protein-coffee'],['Accessories','/collections/all#accessories'],['Subscribe & Save','/products/protein-coffee#purchase-plan']]],
   ['Learn More', [['Giveaway'],['Recipes'],['Blog'],['Become an Affiliate'],['Wholesale']]],
-  ['Help', [['Manage Subscriptions'],['Support'],['Reviews','/products/protein-coffee#reviews'],['Find a Store']]],
+  ['Help', [['Manage Subscriptions'],['Support'],['Reviews','/pages/reviews'],['Find a Store']]],
   ['Legal', [['Returns & Refunds'],['Terms of Sale'],['Privacy Policy'],['Do Not Sell or Share My Personal Information']]],
 ];
 const icons=[['Instagram','5a37177a-c6d3-4c09-a470-c8305ee9b019.svg'],['Facebook','95b26e2b-7053-4a02-b29e-fa0341131f4c.svg'],['TikTok','1ccff89b-29e4-4bcb-a02f-fac2f0683e55.svg'],['Pinterest','59214941-4046-418e-9e74-249f147b97a7.svg'],['Twitter','f039a228-2d7c-46ba-9506-b4ea862afb6c.svg'],['YouTube','69ab37c5-b946-4a1f-88a6-28386ae3317f.svg'],['Snapchat','e7648be1-6b7c-4de8-a514-2a2ed52a5010.svg']];
@@ -40,7 +41,7 @@ export function SiteFooter(){
     <div className="footer-grid">
       {groups.slice(0,2).map(([title,links])=><FooterGroup key={title} title={title} links={links}/>)}
       <div className="footer-newsletter"><div className="newsletter-promises"><span><b>✓</b> No spam ever</span><span><b>✓</b> Best Deals Only</span></div>
-        <form className="newsletter-form" onSubmit={e=>{e.preventDefault();openNewsletter()}}><label className="sr-only" htmlFor="footer-email">Email address</label><input id="footer-email" type="email" name="email" autoComplete="email" placeholder="Enter your email" required/><button type="submit">Sign up</button></form>
+        <form className="newsletter-form" onSubmit={e=>{e.preventDefault();openNewsletter(e.currentTarget.elements.email.value)}}><label className="sr-only" htmlFor="footer-email">Email address</label><input id="footer-email" type="email" name="email" autoComplete="email" placeholder="Enter your email" required/><button type="submit">Sign up</button></form>
         <div className="footer-socials" aria-label="Social media">{icons.map(([name,file])=><button key={name} aria-label={name} onClick={()=>openInfo(name)}><img src={'/assets/'+file} alt=""/></button>)}</div>
       </div>
       {groups.slice(2).map(([title,links])=><FooterGroup key={title} title={title} links={links}/>)}

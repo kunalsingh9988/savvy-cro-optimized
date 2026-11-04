@@ -1,0 +1,11 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {chromium} from 'playwright';import {titles,recipes,articles} from '../src/content-data.js';
+const catalog=JSON.parse(fs.readFileSync('src/catalog.json'));
+const routes=['/','/collections/all','/products/protein-coffee',...new Set(catalog.map(p=>'/collections/'+p.category)),...catalog.map(p=>'/products/'+p.id),...Object.keys(titles),...recipes.map(r=>'/pages/recipes/'+r.id),...articles.map(a=>'/blogs/coffee/'+a.id)];
+const known=new Set(routes);const base=process.env.CHECK_URL||'http://localhost:5173';const browser=await chromium.launch();const findings=[];
+for(const width of [390,1440]){const page=await browser.newPage({viewport:{width,height:1000}});let errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+ for(const route of routes){errors=[];const response=await page.goto(base+route);assert.equal(response.status(),200);await page.waitForLoadState('networkidle');await page.locator('img').evaluateAll(imgs=>Promise.all(imgs.map(i=>{i.loading='eager';return i.decode().catch(()=>{})})));const data=await page.evaluate(()=>({width:document.documentElement.scrollWidth,images:[...document.images].filter(i=>!i.naturalWidth).map(i=>i.src),links:[...document.querySelectorAll('a[href]')].map(a=>({text:(a.innerText||a.getAttribute('aria-label')||'').trim(),href:a.getAttribute('href')})),nested:document.querySelectorAll('a a').length}));
+  const bad=data.links.filter(l=>!l.href||l.href==='#'||(l.href.startsWith('/')&&!known.has(l.href.split('#')[0])));assert.equal(data.width,width,`Overflow ${width} ${route}`);assert.deepEqual(data.images,[],`Missing images ${route}`);assert.deepEqual(errors,[],`Runtime or console errors ${route}`);assert.equal(data.nested,0,`Nested links ${route}`);assert.deepEqual(bad,[],`Invalid links ${route}`);assert.equal(await page.getByRole('heading',{level:1}).count(),1,`Visible h1 ${route}`);findings.push({width,route,links:data.links.length});console.log('PASS',width,route);
+ }
+ await page.close();
+}
+await browser.close();fs.writeFileSync('qa/full-site-report.json',JSON.stringify({routes:routes.length,products:catalog.length,checks:findings},null,2));console.log('Verified',findings.length,'route/viewport combinations');

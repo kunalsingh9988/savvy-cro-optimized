@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://savvy-cro-optimized.vercel.app/sitemap.xml

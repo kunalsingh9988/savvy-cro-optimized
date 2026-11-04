@@ -9,3 +9,5 @@ Precise object edit: replace the visible Javvy or Javy branding with Savvy, keep
 The desktop hero, mobile hero and product hero were edited separately. Product variants were exported at the original aspect ratios and delivery dimensions as high-quality WebP. Code-native Savvy wordmarks replace the original logo artwork.
 
 AI editing may introduce small differences in photography, lettering and packaging details. The pages use the source design's copy and layout, but regenerated artwork is not an identical pixel copy of the source image.
+
+Individual product pages use 65 higher-resolution `public/assets/savvy-<source-index>-detail.webp` files exported from the existing Savvy image edits. Their committed paths are recorded in `src/catalog.json`. These conversions preserve the edited product image and transparency; no additional product appearance or packaging facts were generated for the detail pages.
