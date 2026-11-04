@@ -20,6 +20,7 @@
 - Footer navigation, mobile menu navigation, browser Back/Forward and unknown-page handling.
 - Direct navigation to bundle purchase options using a URL fragment.
 - Review expansion, feedback scoped to the current visit, customer-photo preview and category arrows.
+- Homepage carousel previous/next controls at desktop and mobile widths. Synthesized Chromium touch checks verify horizontal swiping and vertical page scrolling across the carousel.
 - Production build succeeds. Dependency audit reports no known vulnerabilities.
 
 These are browser tests using Chromium and simulated viewport sizes, not physical-device or Safari tests.

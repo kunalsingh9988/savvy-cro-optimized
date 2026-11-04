@@ -1,4 +1,4 @@
-import { DesignImage, DesignLink, DesignButton, DesignInput } from "../ui.jsx";
+import { DesignImage, DesignLink, DesignButton, DesignInput, CarouselControl } from "../ui.jsx";
 const imgBr563MockupProteinCoffeeBananaBread20ServV4001Q126Front2000X2000Png = "/assets/f2586a49-d7ef-4c87-a8ce-419dd1203314.png";
 const imgBr506MockupProteinCoffeeCookiesNCream20ServV4001Q325Front2000X2000Png = "/assets/b84561ba-39c0-4ee5-8630-67669f9241cc.png";
 const imgBr370MockupProteinCoffeeEggNog20ServingsV3002Q325Front2000X2000Png = "/assets/10b4c1d1-78a2-40ba-bbcb-a26dc807f74e.png";
@@ -892,12 +892,12 @@ export default function Section1568() {
         </div>
       </div>
       <div className="sba10e6fd5 sc0d43822d sd89972fe1 s012fbd121 s2b589f3ab" data-node-id="145:1987" data-name="Container">
-        <div className="s36b381be4 sda4dbfbc4 s53cb735fe sc78facc7a s47bd37e25 sa5be38b90" data-node-id="145:1988" data-name="SVG">
+        <CarouselControl className="s36b381be4 sda4dbfbc4 s53cb735fe sc78facc7a s47bd37e25 sa5be38b90" data-node-id="145:1988" data-name="SVG" direction={-1}>
           <DesignImage alt="" className="sda4dbfbc4 s0214b4b35 s7b7df0449 s2191c1456 s48bd39401" src={imgSvg} />
-        </div>
-        <div className="s36b381be4 sda4dbfbc4 s53cb735fe s320808a12 s47bd37e25 sa5be38b90" data-node-id="145:1991" data-name="SVG">
+        </CarouselControl>
+        <CarouselControl className="s36b381be4 sda4dbfbc4 s53cb735fe s320808a12 s47bd37e25 sa5be38b90" data-node-id="145:1991" data-name="SVG" direction={1}>
           <DesignImage alt="" className="sda4dbfbc4 s0214b4b35 s7b7df0449 s2191c1456 s48bd39401" src={imgSvg1} />
-        </div>
+        </CarouselControl>
         <div className="sda4dbfbc4 s507c28c0b s60fbb7713 s8dddea077 s6919ee876 s60541e1e2 s5a8c39d8b sbf5dc299e s9b8692c8e s79fc1f9c3 s3d1424927 sa6b815cae" data-node-id="145:1994" data-name="Link:margin">
           <DesignLink className="sca6bcd4b6 s12d7bb320 sba4c50899 s507c28c0b s60fbb7713 s6919ee876 s3960ffc24 s86843cf1e sfd1f00992 sbf5dc299e s6dcf768a8 s4ba951e39 sd89972fe1 seb6bde8d9 s012fbd121 s71e31b2f1" data-node-id="145:1995" data-name="Link">
             <div className="scb9feeeb3 s668b21aa5 s257f3a2f6 sd89972fe1" data-node-id="145:1996" data-name="Container">

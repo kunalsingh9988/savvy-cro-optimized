@@ -18,13 +18,14 @@ for(const file of files){let s=fs.readFileSync('design-reference/'+file,'utf8');
  s=s.replace(/className="([^"]*)"/g,(_,classes)=>{raw+=classes+' ';return 'className="'+classes.split(/\s+/).filter(Boolean).map(t=>{if(!tokenMap.has(t))tokenMap.set(t,'s'+createHash('sha1').update(t).digest('hex').slice(0,9));return tokenMap.get(t)}).join(' ')+'"'});
  const name='Section'+file.match(/145-(\d+)/)[1];s=s.replace(/export default function \w+\(/,'export default function '+name+'(');
  // Image component gives accessible names and central asset substitutions.
- s='import {DesignImage,DesignLink,DesignButton,DesignInput} from "../ui.jsx";\n'+s.replace(/<img /g,'<DesignImage ');
+ s='import {DesignImage,DesignLink,DesignButton,DesignInput,CarouselControl} from "../ui.jsx";\n'+s.replace(/<img /g,'<DesignImage ');
  const ast=parse(s,{sourceType:'module',plugins:['jsx']});
  const traverse=traverseModule.default??traverseModule; const generate=generateModule.default??generateModule;
  traverse(ast,{JSXElement(path){const n=path.node;const nm=n.openingElement.attributes.find(a=>a.name?.name==='data-name')?.value?.value;let tag=null;
  if(nm==='Link'||nm?.startsWith('Link - '))tag='DesignLink';
  if(nm==='Button'||nm?.startsWith('Button - ')||nm?.endsWith('→ Button'))tag='DesignButton';
  if(nm==='Input')tag='DesignInput';
+ const cid=n.openingElement.attributes.find(a=>a.name?.name==='data-node-id')?.value?.value;const controls={'145:601':-1,'145:604':1,'145:1988':-1,'145:1991':1,'145:1205':-1,'145:1208':1,'145:2507':-1,'145:2510':1};if(cid in controls){tag='CarouselControl';n.openingElement.attributes.push({type:'JSXAttribute',name:{type:'JSXIdentifier',name:'direction'},value:{type:'JSXExpressionContainer',expression:{type:'NumericLiteral',value:controls[cid]}}})}
  if(tag){n.openingElement.name.name=tag;if(n.closingElement)n.closingElement.name.name=tag;}
  }});
  s=generate(ast,{compact:false}).code;

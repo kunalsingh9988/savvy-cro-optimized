@@ -1,4 +1,4 @@
-import { DesignImage, DesignLink, DesignButton, DesignInput } from "../ui.jsx";
+import { DesignImage, DesignLink, DesignButton, DesignInput, CarouselControl } from "../ui.jsx";
 const imgBr517MockupComfrtXSavvyHoodieQ425Front2000X20001Png = "/assets/3bea2972-9dfe-44ec-8908-2db5ad05a4a1.png";
 const imgStainlessSteelTumbler2000X2000Png = "/assets/b9897d31-2678-485a-9c91-f783d47dae8a.png";
 const imgMagicSpoonPng = "/assets/aa040dfc-3b33-4ebf-a3d7-874e99097eae.png";
@@ -393,12 +393,12 @@ export default function Section1029() {
         </div>
       </div>
       <div className="sd7ced5c44 s9f278ec00 sd89972fe1 s012fbd121 sf0e916932" data-node-id="145:1204" data-name="Container">
-        <div className="s36b381be4 sda4dbfbc4 s53cb735fe sc78facc7a sd694ba66e s660695f0a" data-node-id="145:1205" data-name="SVG">
+        <CarouselControl className="s36b381be4 sda4dbfbc4 s53cb735fe sc78facc7a sd694ba66e s660695f0a" data-node-id="145:1205" data-name="SVG" direction={-1}>
           <DesignImage alt="" className="sda4dbfbc4 s0214b4b35 s7b7df0449 s2191c1456 s48bd39401" src={imgSvg} />
-        </div>
-        <div className="s36b381be4 sda4dbfbc4 s53cb735fe sae3c49c37 sd694ba66e s660695f0a" data-node-id="145:1208" data-name="SVG">
+        </CarouselControl>
+        <CarouselControl className="s36b381be4 sda4dbfbc4 s53cb735fe sae3c49c37 sd694ba66e s660695f0a" data-node-id="145:1208" data-name="SVG" direction={1}>
           <DesignImage alt="" className="sda4dbfbc4 s0214b4b35 s7b7df0449 s2191c1456 s48bd39401" src={imgSvg1} />
-        </div>
+        </CarouselControl>
         <div className="sda4dbfbc4 s507c28c0b s60fbb7713 s8dddea077 s6919ee876 s60541e1e2 sefc358413 sbf5dc299e s3969e54fb sb63356aea s256e2a1e4" data-node-id="145:1211" data-name="Link:margin">
           <DesignLink className="sca6bcd4b6 s12d7bb320 sba4c50899 s507c28c0b s60fbb7713 s6919ee876 s3960ffc24 s86843cf1e sfd1f00992 sbf5dc299e sb8dadc497 sd89972fe1 seb6bde8d9 s012fbd121 s6da6a3c3f" data-node-id="145:1212" data-name="Link">
             <div className="scb9feeeb3 s668b21aa5 s257f3a2f6 sd89972fe1" data-node-id="145:1213" data-name="Container">
