@@ -1,0 +1,170 @@
+{% comment %}
+  Section contract.
+  Savvy information page. Renders the intro banner plus handle-specific bodies
+  (support, reviews, affiliate, wholesale, privacy, store locator, newsletter,
+  community, media) or the page's own rich text for everything else.
+  @example templates/page.json — single section; branch on page.handle.
+{% endcomment %}
+
+{% liquid
+  assign h = page.handle
+  assign intros = 'giveaway::Information about the current Savvy giveaway.|recipes::Make your next coffee break your own. Explore simple preparation guides with Savvy.|support::Product questions, order enquiries and useful information.|affiliate::Start a conversation about creating with Savvy.|wholesale::Coffee for your business starts with a conversation.|privacy-choices::Manage preferences on this device and prepare a privacy request.|reviews::Customer stories included in the supplied Savvy design.|store-locator::Find Savvy near you.|newsletter::Stay connected with Savvy.|community::The Savvy community.|media::Savvy stories and coffee moments.' | split: '|'
+  assign intro = ''
+  for i in intros
+    assign pair = i | split: '::'
+    if pair[0] == h
+      assign intro = pair[1]
+    endif
+  endfor
+%}
+
+<div class="native-page">
+  <div class="content-page-intro">
+    <a href="{{ routes.root_url }}">Savvy</a>
+    <h1>{{ page.title | default: 'Savvy' }}</h1>
+    {% if intro != blank %}<p>{{ intro }}</p>{% endif %}
+  </div>
+
+  <div class="content-container content-body">
+    {% case h %}
+
+      {% when 'support' %}
+        <div class="support-links">
+          <div><h2>Subscriptions</h2><p>Manage or adjust your Savvy subscription.</p><a href="{{ routes.account_url }}"><span>Manage subscriptions →</span></a></div>
+          <div><h2>Returns &amp; refunds</h2><p>Read the returns policy before starting a return.</p><a href="{{ shop.refund_policy.url | default: '/policies/refund-policy' }}"><span>View policy →</span></a></div>
+          <div><h2>Privacy requests</h2><p>Control how your information is used.</p><a href="/pages/privacy-choices"><span>Privacy choices →</span></a></div>
+        </div>
+        {% render 'sv-request-form', kind: 'support request', id: 'request' %}
+        <section class="native-faq">
+          <h2>Quick answers</h2>
+          <details><summary>Where are ingredients and allergens listed?</summary><p>Use your selected product’s packaging for complete ingredients, allergens and preparation information.</p></details>
+          <details><summary>How do I change a subscription?</summary><p>Use your <a href="{{ routes.account_url }}">account page</a> to manage an active subscription, or contact support through the form above.</p></details>
+          <details><summary>How long does shipping take?</summary><p>Shipping times and rates are shown at checkout once your address is entered.</p></details>
+        </section>
+
+      {% when 'reviews' %}
+        <section class="prose">
+          <p>These testimonials are reproduced from the supplied design.</p>
+          <a class="native-button inline-button" href="/products/protein-coffee#reviews">Read all Protein Coffee reviews</a>
+        </section>
+        <div class="review-quotes">
+          <blockquote><h2>Great Choice</h2><p>“I love Savvy protein coffee! I make my Carmel cold brew everyday and add it just to give it a kick of more protein. It is delicious.”</p><cite>Tommy S.</cite></blockquote>
+          <blockquote><h2>AMAZING!!</h2><p>“It is awesome! I was Leary about at first but I LOVE Savvy coffee! I have already used my first bottle and on to my second!”</p><cite>Paula P.</cite></blockquote>
+        </div>
+        {% render 'sv-request-form', kind: 'review', id: 'review-draft' %}
+
+      {% when 'affiliate' or 'wholesale' %}
+        <section class="prose">
+          {%- if page.content != blank -%}{{ page.content }}{%- else -%}
+            <p>{% if h == 'affiliate' %}Partner with Savvy to share better coffee with your audience.{% else %}Bring Savvy to your business — cafés, gyms, offices and retail.{% endif %}</p>
+          {%- endif -%}
+        </section>
+        {% render 'sv-request-form', kind: h, business: true %}
+
+      {% when 'privacy-choices' %}
+        <section class="prose">
+          <h2>Preferences on this device</h2>
+          <p>Optional analytics cookies are not active on this storefront.</p>
+          <form data-sv-privacy>
+            <label class="privacy-checkbox"><input type="checkbox" name="analytics">Allow optional analytics if that service is connected in the future</label>
+            <button class="native-button inline-button" type="submit">Save device preferences</button>
+            <p class="form-feedback" role="status" hidden data-sv-privacy-done>Preferences saved on this device.</p>
+          </form>
+        </section>
+        {% render 'sv-request-form', kind: 'privacy request' %}
+
+      {% when 'store-locator' %}
+        <section class="prose">
+          <h2>Shop Savvy near you</h2>
+          {%- if page.content != blank -%}{{ page.content }}{%- else -%}
+            <p>We’re working on getting Savvy into stores near you. In the meantime, the full collection is available online.</p>
+          {%- endif -%}
+          <form class="native-form" data-sv-store-search>
+            <label>City or postal code<input name="location" autocomplete="postal-code" required></label>
+            <button class="native-button" type="submit">Check store information</button>
+          </form>
+          <p class="form-feedback" role="status" hidden data-sv-store-done>No retail locations were found near your search yet — you can browse the online collection below.</p>
+          <a class="native-text-button" href="{{ routes.all_products_collection_url }}">Shop online →</a>
+        </section>
+
+      {% when 'newsletter' %}
+        <section class="prose">
+          <h2>Newsletter information</h2>
+          <p>Explore recipes, flavors and Savvy updates.</p>
+          {%- form 'customer', class: 'native-form' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <label class="form-wide">Email address<input type="email" name="contact[email]" autocomplete="email" required></label>
+            <button class="native-button" type="submit">Sign up</button>
+            {%- if form.posted_successfully? -%}<p class="form-feedback" role="status">Thanks — you’re on the list!</p>{%- endif -%}
+          {%- endform -%}
+          <a class="native-text-button" href="/pages/recipes">Explore recipes →</a>
+        </section>
+
+      {% when 'community' %}
+        <div class="community-list">
+          {%- assign chans = 'Instagram,instagram|Facebook,facebook|TikTok,tiktok|Pinterest,pinterest|Twitter,twitter|YouTube,youtube|Snapchat,snapchat' | split: '|' -%}
+          {%- for c in chans -%}
+            {%- assign cp = c | split: ',' -%}
+            <div id="{{ cp[1] }}"><h2>{{ cp[0] }}</h2><p>Follow Savvy for recipes, launches and giveaways.</p></div>
+          {%- endfor -%}
+        </div>
+        <section class="prose">{{ page.content }}</section>
+
+      {% when 'media' %}
+        <section class="prose">
+          <h2>Coffee moments</h2>
+          <div class="media-photos">
+            <img src="{{ 'ac01c61a-3ca4-4619-a59f-9b6c466f1a6c.png' | asset_url }}" alt="Savvy customer coffee moment 1" loading="lazy" width="541" height="960">
+            <img src="{{ 'savvy-66-541x960.webp' | asset_url }}" alt="Savvy customer coffee moment 2" loading="lazy" width="541" height="960">
+            <img src="{{ '52c3237f-6fd8-4b18-b49f-49ef7208b8af.png' | asset_url }}" alt="Savvy customer coffee moment 3" loading="lazy" width="541" height="960">
+            <img src="{{ 'savvy-68-541x960.webp' | asset_url }}" alt="Savvy customer coffee moment 4" loading="lazy" width="541" height="960">
+          </div>
+          <a class="native-button inline-button" href="/pages/recipes">Make your own coffee moment</a>
+        </section>
+
+      {% when 'recipes' %}
+        <div class="editorial-grid">
+          {%- assign recipes = 'Everyday iced coffee,014efa88-9cc0-4bed-8c54-4c93f2d1e781.png,A simple starting point for your favorite coffee concentrate flavor.|Cinnamon cream coffee,ff264cbf-e8a1-4fbf-8fbb-c88492082d73.png,Bring cinnamon flavor to your next coffee break.|Mocha iced coffee,5f555b6c-26ad-4c7e-a46f-bec597d3c438.png,Customize your iced coffee with mocha flavor.' | split: '|' -%}
+          {%- for r in recipes -%}
+            {%- assign rp = r | split: ',' -%}
+            <article class="editorial-card">
+              <a href="#recipe-{{ forloop.index }}"><img src="{{ rp[1] | asset_url }}" alt="{{ rp[0] }}" loading="lazy" width="550" height="550"><h2>{{ rp[0] }}</h2></a>
+              <p>{{ rp[2] }}</p>
+              <a class="native-text-button" href="#recipe-{{ forloop.index }}">Read recipe →</a>
+            </article>
+          {%- endfor -%}
+        </div>
+        <div class="prose" style="margin-top:64px">
+          <section id="recipe-1"><h2>Everyday iced coffee</h2><p>A simple starting point for your favorite coffee concentrate flavor.</p><p><strong>You’ll need:</strong> ice, cold water or your preferred milk, Savvy Coffee Concentrate.</p><ol><li>Fill your glass with ice.</li><li>Add cold water or your preferred milk.</li><li>Measure your concentrate according to the bottle’s directions, then stir.</li><li>Taste and customize your drink to your preference.</li></ol><p>Preparation guide. Check your selected product’s packaging for serving sizes, preparation directions and allergen information.</p><a class="native-button inline-button" href="{{ collections['concentrates'].url | default: routes.collections_url }}">Explore the ingredients</a></section>
+          <section id="recipe-2"><h2>Cinnamon cream coffee</h2><p>Bring cinnamon flavor to your next coffee break.</p><p><strong>You’ll need:</strong> prepared coffee, Savvy Cinnamon Roll Protein Creamer, your preferred milk or mixer.</p><ol><li>Prepare your coffee as directed on its packaging.</li><li>Measure the creamer using the serving directions on the package.</li><li>Mix until combined.</li><li>Serve the way you enjoy your coffee.</li></ol><p>Preparation guide. Check your selected product’s packaging for serving sizes, preparation directions and allergen information.</p><a class="native-button inline-button" href="/products/cinnamon-roll-protein-creamer">Explore the ingredients</a></section>
+          <section id="recipe-3"><h2>Mocha iced coffee</h2><p>Customize your iced coffee with mocha flavor.</p><p><strong>You’ll need:</strong> ice, prepared cold coffee, your preferred milk, Savvy Mocha Coffee Syrup.</p><ol><li>Add ice to your glass.</li><li>Pour in your prepared cold coffee and milk.</li><li>Add mocha syrup according to its label and your taste.</li><li>Stir and enjoy.</li></ol><p>Preparation guide. Check your selected product’s packaging for serving sizes, preparation directions and allergen information.</p><a class="native-button inline-button" href="/products/mocha-coffee-syrup">Explore the ingredients</a></section>
+        </div>
+
+      {% when 'giveaway' %}
+        <section class="prose">
+          {%- if page.content != blank -%}{{ page.content }}{%- else -%}
+            <h2>Current giveaway</h2>
+            <p>Details for the current Savvy giveaway will be posted here.</p>
+            <a class="native-button inline-button" href="{{ routes.all_products_collection_url }}">Shop the collection</a>
+            <a class="native-text-button" href="/pages/newsletter">Get notified →</a>
+          {%- endif -%}
+        </section>
+
+      {% else %}
+        <section class="prose">
+          {%- if page.content != blank -%}
+            {{ page.content }}
+          {%- else -%}
+            <p>{{ page.title | default: 'This page' }} is coming soon.</p>
+          {%- endif -%}
+        </section>
+    {% endcase %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "SV Page",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,117 @@
+{% comment %}
+  Section contract.
+  Savvy storefront footer: wordmark, link groups, newsletter signup and socials.
+  Link groups use link_list settings and fall back to the Savvy design menus.
+  @example Footer group member.
+{% endcomment %}
+
+{% liquid
+  assign shop_links = section.settings.menu_shop | default: ''
+  assign learn_links = section.settings.menu_learn | default: ''
+  assign help_links = section.settings.menu_help | default: ''
+  assign legal_links = section.settings.menu_legal | default: ''
+%}
+
+<footer class="site-footer" aria-label="Footer">
+  <div class="footer-inner">
+    <a href="{{ routes.root_url }}" class="footer-logo" aria-label="{{ shop.name }} home">
+      {%- render 'sv-brand', white: true -%}
+    </a>
+    <div class="footer-grid">
+      <nav class="footer-group" aria-label="Shop">
+        <h2>Shop</h2>
+        {%- if shop_links != blank and linklists[shop_links].links.size > 0 -%}
+          {%- for link in linklists[shop_links].links -%}<a href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+        {%- else -%}
+          <a href="/products/protein-coffee">Build Your Bundle</a>
+          <a href="{{ routes.all_products_collection_url }}#concentrates">Coffee Concentrate</a>
+          <a href="/products/protein-coffee">Protein Coffee</a>
+          <a href="{{ routes.all_products_collection_url }}#accessories">Accessories</a>
+          <a href="/products/protein-coffee#purchase-plan">Subscribe &amp; Save</a>
+        {%- endif -%}
+      </nav>
+      <nav class="footer-group" aria-label="Learn More">
+        <h2>Learn More</h2>
+        {%- if learn_links != blank and linklists[learn_links].links.size > 0 -%}
+          {%- for link in linklists[learn_links].links -%}<a href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+        {%- else -%}
+          <a href="/pages/giveaway">Giveaway</a>
+          <a href="/pages/recipes">Recipes</a>
+          <a href="/blogs/coffee">Blog</a>
+          <a href="/pages/affiliate">Become an Affiliate</a>
+          <a href="/pages/wholesale">Wholesale</a>
+        {%- endif -%}
+      </nav>
+      <div class="footer-newsletter">
+        <div class="newsletter-promises">
+          <span><b aria-hidden="true">✓</b> No spam ever</span>
+          <span><b aria-hidden="true">✓</b> Best Deals Only</span>
+        </div>
+        {%- form 'customer', class: 'newsletter-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <label class="sr-only" for="footer-email-{{ section.id }}">Email address</label>
+          <input id="footer-email-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" placeholder="Enter your email" required>
+          <button type="submit">Sign up</button>
+          {%- if form.posted_successfully? -%}
+            <p class="newsletter-success" role="status">Thanks for signing up!</p>
+          {%- endif -%}
+        {%- endform -%}
+        <div class="footer-socials" aria-label="Social media">
+          {%- assign socials = 'Instagram,5a37177a-c6d3-4c09-a470-c8305ee9b019.svg,instagram_url|Facebook,95b26e2b-7053-4a02-b29e-fa0341131f4c.svg,facebook_url|TikTok,1ccff89b-29e4-4bcb-a02f-fac2f0683e55.svg,tiktok_url|Pinterest,59214941-4046-418e-9e74-249f147b97a7.svg,pinterest_url|Twitter,f039a228-2d7c-46ba-9506-b4ea862afb6c.svg,twitter_url|YouTube,69ab37c5-b946-4a1f-88a6-28386ae3317f.svg,youtube_url|Snapchat,e7648be1-6b7c-4de8-a514-2a2ed52a5010.svg,snapchat_url' | split: '|' -%}
+          {%- for s in socials -%}
+            {%- assign parts = s | split: ',' -%}
+            {%- assign url = section.settings[parts[2]] -%}
+            <a href="{{ url | default: '/pages/community#' | append: parts[0] | downcase | replace: ' ', '-' }}" aria-label="{{ parts[0] }}"{% if url != blank %} target="_blank" rel="noopener"{% endif %}>
+              <img src="{{ parts[1] | asset_url }}" alt="" loading="lazy" width="16" height="16">
+            </a>
+          {%- endfor -%}
+        </div>
+      </div>
+      <nav class="footer-group" aria-label="Help">
+        <h2>Help</h2>
+        {%- if help_links != blank and linklists[help_links].links.size > 0 -%}
+          {%- for link in linklists[help_links].links -%}<a href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+        {%- else -%}
+          <a href="{{ routes.account_url }}">Manage Subscriptions</a>
+          <a href="/pages/support">Support</a>
+          <a href="/pages/reviews">Reviews</a>
+          <a href="/pages/store-locator">Find a Store</a>
+        {%- endif -%}
+      </nav>
+      <nav class="footer-group" aria-label="Legal">
+        <h2>Legal</h2>
+        {%- if legal_links != blank and linklists[legal_links].links.size > 0 -%}
+          {%- for link in linklists[legal_links].links -%}<a href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+        {%- else -%}
+          <a href="{{ shop.refund_policy.url | default: '/policies/refund-policy' }}">Returns &amp; Refunds</a>
+          <a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}">Terms of Sale</a>
+          <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">Privacy Policy</a>
+          <a href="/pages/privacy-choices">Do Not Sell or Share My Personal Information</a>
+        {%- endif -%}
+      </nav>
+    </div>
+    <p class="footer-copyright">{{ section.settings.copyright }}</p>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "SV Footer",
+  "enabled_on": { "groups": ["footer"] },
+  "settings": [
+    { "type": "link_list", "id": "menu_shop", "label": "Shop menu" },
+    { "type": "link_list", "id": "menu_learn", "label": "Learn More menu" },
+    { "type": "link_list", "id": "menu_help", "label": "Help menu" },
+    { "type": "link_list", "id": "menu_legal", "label": "Legal menu" },
+    { "type": "text", "id": "copyright", "label": "Copyright line", "default": "© 2026 Savvy Coffee Company. All rights reserved." },
+    { "type": "header", "content": "Social links" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram" },
+    { "type": "url", "id": "facebook_url", "label": "Facebook" },
+    { "type": "url", "id": "tiktok_url", "label": "TikTok" },
+    { "type": "url", "id": "pinterest_url", "label": "Pinterest" },
+    { "type": "url", "id": "twitter_url", "label": "Twitter / X" },
+    { "type": "url", "id": "youtube_url", "label": "YouTube" },
+    { "type": "url", "id": "snapchat_url", "label": "Snapchat" }
+  ]
+}
+{% endschema %}

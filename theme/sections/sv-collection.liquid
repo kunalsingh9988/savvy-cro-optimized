@@ -1,0 +1,88 @@
+{% comment %}
+  Section contract.
+  Savvy native collection page for the six category collections — intro with
+  collection tabs, client-side search, native sort and the catalog card grid.
+  Skipped on the "all" collection, which renders the generated design sections
+  (sv-collection-*) instead.
+  @example templates/collection.json
+{% endcomment %}
+
+{% if collection.handle != 'all' %}
+<div class="native-page">
+  <div class="category-intro">
+    <a href="{{ routes.all_products_collection_url }}">All products</a>
+    <h1>{{ collection.title }}</h1>
+    <p>{{ collection.description | strip_html | default: section.settings.fallback_copy }}</p>
+    <nav class="category-tabs" aria-label="Collections">
+      {%- for tab in section.settings.tabs -%}
+        <a href="{{ tab.url }}"{% if tab.handle == collection.handle %} aria-current="page"{% endif %}>{{ tab.title }}</a>
+      {%- else -%}
+        {%- assign tab_handles = 'protein-coffee,refreshers,concentrates,creamers,syrups,accessories' | split: ',' -%}
+        {%- for h in tab_handles -%}
+          {%- assign c = collections[h] -%}
+          {%- if c != blank -%}
+            <a href="{{ c.url }}"{% if h == collection.handle %} aria-current="page"{% endif %}>{{ c.title }}</a>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    </nav>
+  </div>
+
+  <div class="content-container">
+    <div class="catalog-toolbar">
+      <label>
+        Search this collection
+        <input type="search" data-sv-collection-search placeholder="Find a flavor or product">
+      </label>
+      <label>
+        Sort by
+        <select data-sv-sort>
+          <option value="{{ collection.url }}?sort_by=manual"{% if collection.sort_by == 'manual' or collection.sort_by == blank %} selected{% endif %}>Featured</option>
+          <option value="{{ collection.url }}?sort_by=price-ascending"{% if collection.sort_by == 'price-ascending' %} selected{% endif %}>Price: low to high</option>
+          <option value="{{ collection.url }}?sort_by=price-descending"{% if collection.sort_by == 'price-descending' %} selected{% endif %}>Price: high to low</option>
+          <option value="{{ collection.url }}?sort_by=title-ascending"{% if collection.sort_by == 'title-ascending' %} selected{% endif %}>Name</option>
+        </select>
+      </label>
+      <span role="status" data-sv-count>{{ collection.products_count }} products</span>
+    </div>
+
+    {%- paginate collection.products by 24 -%}
+      {%- if collection.products.size > 0 -%}
+        <div class="catalog-grid" data-sv-grid>
+          {%- for product in collection.products -%}
+            {% render 'sv-product-card', product: product, tone: collection.handle %}
+          {%- endfor -%}
+        </div>
+        <div class="empty-results" hidden data-sv-empty>
+          <h2>No matching products</h2>
+          <p>Try another flavor or clear your search.</p>
+          <button class="native-button" type="button" data-sv-clear>Clear search</button>
+        </div>
+        {%- if paginate.pages > 1 -%}
+          <nav class="sv-pagination" aria-label="Pagination">
+            {%- if paginate.previous -%}<a class="native-button inline-button" href="{{ paginate.previous.url }}">← Previous</a>{%- endif -%}
+            <span>Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+            {%- if paginate.next -%}<a class="native-button inline-button" href="{{ paginate.next.url }}">Next →</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="empty-results">
+          <h2>No matching products</h2>
+          <p>Try another flavor or clear your search.</p>
+          <a class="native-button inline-button" href="{{ routes.all_products_collection_url }}">Shop all products</a>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "SV Collection Grid",
+  "settings": [
+    { "type": "textarea", "id": "fallback_copy", "label": "Fallback intro copy", "default": "Choose your favorite flavor and make your coffee your way." },
+    { "type": "collection_list", "id": "tabs", "label": "Collection tabs", "limit": 8 }
+  ]
+}
+{% endschema %}

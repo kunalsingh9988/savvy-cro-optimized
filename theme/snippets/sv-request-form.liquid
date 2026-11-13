@@ -1,0 +1,27 @@
+{% comment %}
+  Savvy request form — posts to the store contact endpoint.
+  @param kind - {string} label used in heading copy
+  @param [business] - {boolean} show business fields
+  @param [id] - {string} anchor id
+{% endcomment %}
+
+<section class="request-section"{% if id %} id="{{ id }}"{% endif %}>
+  <h2>Prepare your {{ kind }}</h2>
+  <p class="form-notice">Fill this in and the Savvy team will get back to you.</p>
+  {%- form 'contact', class: 'native-form' -%}
+    <label>Name<input name="contact[name]" autocomplete="name" required maxlength="120"></label>
+    <label>Email address<input name="contact[email]" type="email" autocomplete="email" required></label>
+    {%- if business -%}
+      <label>Business or creator name<input name="contact[business]" required maxlength="180"></label>
+      <label>Location and website<input name="contact[location_website]" maxlength="240"></label>
+    {%- else -%}
+      <label>Order number, if applicable<input name="contact[order_number]" maxlength="240"></label>
+    {%- endif -%}
+    <label class="form-wide">Your message<textarea name="contact[body]" rows="5" required maxlength="5000"></textarea></label>
+    <input type="hidden" name="contact[request_type]" value="{{ kind }}">
+    <button class="native-button" type="submit">Send {{ kind }}</button>
+    {%- if form.posted_successfully? -%}
+      <p class="form-feedback" role="status">Your {{ kind }} was sent. Thanks!</p>
+    {%- endif -%}
+  {%- endform -%}
+</section>

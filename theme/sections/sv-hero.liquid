@@ -1,0 +1,65 @@
+{% comment %}
+  Section contract.
+  Savvy full-bleed homepage hero: promo headline, dual CTAs and trust promises
+  over a lifestyle image (separate mobile art supported).
+  @example First section on the homepage template.
+{% endcomment %}
+
+<div class="wide-hero">
+  <picture class="wide-hero-picture">
+    {%- if section.settings.mobile_image -%}
+      <source media="(max-width:999px)" srcset="{{ section.settings.mobile_image | image_url: width: 1200 }}">
+    {%- else -%}
+      <source media="(max-width:999px)" srcset="{{ 'savvy-hero-mobile.webp' | asset_url }}">
+    {%- endif -%}
+    {%- if section.settings.image -%}
+      {{ section.settings.image | image_url: width: 3840 | image_tag: 'wide-hero-art', 'eager', '100vw' }}
+    {%- else -%}
+      <img class="wide-hero-art" src="{{ 'savvy-hero-desktop.webp' | asset_url }}" alt="{{ section.settings.heading | strip_html }}" fetchpriority="high" width="1836" height="856">
+    {%- endif -%}
+  </picture>
+  <div class="wide-hero-inner">
+    <div class="wide-hero-copy">
+      <p class="hero-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h1>{{ section.settings.heading }}</h1>
+      <p class="hero-subtitle">{{ section.settings.subtitle }}</p>
+      <div class="hero-actions">
+        <a href="{{ section.settings.cta_primary_link | default: routes.all_products_collection_url }}">{{ section.settings.cta_primary_label }}</a>
+        <a href="{{ section.settings.cta_secondary_link | default: '/products/protein-coffee' }}">{{ section.settings.cta_secondary_label }}</a>
+      </div>
+      <div class="hero-promises">
+        <div>
+          <img src="{{ 'edfb422a-1e98-4c10-80bd-852129ca0132.svg' | asset_url }}" alt="" loading="lazy" width="57" height="40">
+          <p><strong>{{ section.settings.promise_1_strong }}</strong> {{ section.settings.promise_1_text }}</p>
+        </div>
+        <div>
+          <img src="{{ '580c64fe-7571-4e99-b4bb-58b1fb285998.svg' | asset_url }}" alt="" loading="lazy" width="29" height="32">
+          <p><strong>{{ section.settings.promise_2_strong }}</strong> {{ section.settings.promise_2_text }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "SV Hero",
+  "class": "sv-design",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Desktop image" },
+    { "type": "image_picker", "id": "mobile_image", "label": "Mobile image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "☀️ BLACK FRIDAY IN SUMMER 🏖️" },
+    { "type": "html", "id": "heading", "label": "Heading", "default": "UP TO 38% OFF<br>FIRST ORDER" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Create Café-quality Coffee at Home" },
+    { "type": "text", "id": "cta_primary_label", "label": "Primary CTA label", "default": "Shop Protein Refreshers" },
+    { "type": "url", "id": "cta_primary_link", "label": "Primary CTA link" },
+    { "type": "text", "id": "cta_secondary_label", "label": "Secondary CTA label", "default": "Shop Protein Coffee" },
+    { "type": "url", "id": "cta_secondary_link", "label": "Secondary CTA link" },
+    { "type": "text", "id": "promise_1_strong", "label": "Promise 1 highlight", "default": "100+ Million" },
+    { "type": "text", "id": "promise_1_text", "label": "Promise 1 text", "default": "Happy Coffees Made" },
+    { "type": "text", "id": "promise_2_strong", "label": "Promise 2 highlight", "default": "30-Day" },
+    { "type": "text", "id": "promise_2_text", "label": "Promise 2 text", "default": "Money-Back Guarantee" }
+  ],
+  "presets": [{ "name": "SV Hero" }]
+}
+{% endschema %}

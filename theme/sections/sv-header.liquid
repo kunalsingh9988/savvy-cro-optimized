@@ -1,0 +1,93 @@
+{% comment %}
+  Section contract.
+  Savvy storefront header: announcement bar, wordmark nav, account/cart actions,
+  and the new-flavor promo banner. Cart opens the theme cart drawer via sv-app.js.
+  @example Header group member. Menu falls back to the Savvy design nav when no
+  link list is selected.
+{% endcomment %}
+
+{% liquid
+  assign show_banner = true
+  if template.name == 'product' and product.handle == section.settings.flagship_handle
+    assign show_banner = false
+  endif
+  if section.settings.show_flavor_banner == false
+    assign show_banner = false
+  endif
+  assign menu = section.settings.menu
+%}
+
+<header class="site-header{% unless show_banner %} product-header{% endunless %}">
+  {%- if section.settings.announcement_text != blank -%}
+    <a class="announcement" href="{{ section.settings.announcement_link | default: routes.all_products_collection_url }}">
+      {{- section.settings.announcement_text -}}
+    </a>
+  {%- endif -%}
+  <div class="nav-bar">
+    <button class="menu-button icon-button" type="button" aria-label="Open menu" data-sv-menu-open aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M0 5h24M0 12h24M0 19h24"/></svg>
+    </button>
+    <a class="home-logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }} home">
+      {%- render 'sv-brand' -%}
+    </a>
+    <nav aria-label="Main navigation">
+      {%- if menu != blank and linklists[menu].links.size > 0 -%}
+        {%- for link in linklists[menu].links -%}
+          <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title }}</a>
+        {%- endfor -%}
+      {%- else -%}
+        <a href="{{ routes.all_products_collection_url }}">Shop All</a>
+        <a href="/products/protein-coffee">Protein Coffee</a>
+        <a href="{{ routes.all_products_collection_url }}#refreshers">Protein Refreshers</a>
+        <a href="{{ routes.all_products_collection_url }}#concentrates">Coffee Concentrate</a>
+        <a href="{{ routes.all_products_collection_url }}#creamers">Protein Creamer</a>
+        <a href="{{ routes.all_products_collection_url }}#syrups">Coffee Syrup</a>
+        <a href="/pages/recipes">Recipes</a>
+        <a href="/pages/support">Help</a>
+      {%- endif -%}
+    </nav>
+    <div class="nav-actions">
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="account-button icon-button" href="{{ routes.account_url }}" aria-label="Account">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="7" r="5"/><path d="M2 22c0-10 20-10 20 0"/></svg>
+        </a>
+      {%- endif -%}
+      <button class="icon-button cart-button" type="button" aria-label="Open cart ({{ cart.item_count }} items)" data-sv-cart-open>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 7h10l2 13H5L7 7Z"/><path d="M9 9V5a3 3 0 0 1 6 0v4"/></svg>
+        <span class="cart-count" data-sv-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </div>
+  {%- if show_banner -%}
+    <a class="flavor-banner" href="{{ section.settings.banner_link | default: routes.all_products_collection_url }}">
+      <strong>{{ section.settings.banner_label }}</strong>
+      <span>{{ section.settings.banner_title }}<small>{{ section.settings.banner_subtitle }}</small></span>
+      {%- if section.settings.banner_image -%}
+        {{ section.settings.banner_image | image_url: width: 620 | image_tag: '', 'eager', '125x40' }}
+      {%- else -%}
+        <img src="{{ '5a60551b-6ea0-4fcb-89f5-b7f1e0450d69.png' | asset_url }}" alt="{{ section.settings.banner_title }}" loading="eager" width="320" height="100">
+      {%- endif -%}
+      <b>{{ section.settings.banner_cta }}</b>
+    </a>
+  {%- endif -%}
+</header>
+
+{% schema %}
+{
+  "name": "SV Header",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "UP TO 38% OFF YOUR FIRST ORDER + FREE SHIPPING" },
+    { "type": "url", "id": "announcement_link", "label": "Announcement link" },
+    { "type": "link_list", "id": "menu", "label": "Navigation menu" },
+    { "type": "text", "id": "flagship_handle", "label": "Flagship product handle (hides banner)", "default": "protein-coffee" },
+    { "type": "checkbox", "id": "show_flavor_banner", "label": "Show new-flavor banner", "default": true },
+    { "type": "text", "id": "banner_label", "label": "Banner label", "default": "NEW FLAVOR!" },
+    { "type": "text", "id": "banner_title", "label": "Banner title", "default": "Cinnamon Roll" },
+    { "type": "text", "id": "banner_subtitle", "label": "Banner subtitle", "default": "protein creamer" },
+    { "type": "image_picker", "id": "banner_image", "label": "Banner image" },
+    { "type": "text", "id": "banner_cta", "label": "Banner CTA", "default": "AVAILABLE NOW ↗" },
+    { "type": "url", "id": "banner_link", "label": "Banner link" }
+  ]
+}
+{% endschema %}

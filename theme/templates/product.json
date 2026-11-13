@@ -1,0 +1,130 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "sv-product",
+      "settings": {}
+    },
+    "flagship_01": {
+      "type": "sv-flagship-01",
+      "settings": {}
+    },
+    "flagship_02a": {
+      "type": "sv-flagship-02a",
+      "settings": {}
+    },
+    "flagship_02b": {
+      "type": "sv-flagship-02b",
+      "settings": {}
+    },
+    "flagship_03": {
+      "type": "sv-flagship-03",
+      "settings": {}
+    },
+    "flagship_04": {
+      "type": "sv-flagship-04",
+      "settings": {}
+    },
+    "flagship_05": {
+      "type": "sv-flagship-05",
+      "settings": {}
+    },
+    "flagship_06": {
+      "type": "sv-flagship-06",
+      "settings": {}
+    },
+    "flagship_07": {
+      "type": "sv-flagship-07",
+      "settings": {}
+    },
+    "flagship_08": {
+      "type": "sv-flagship-08",
+      "settings": {}
+    },
+    "flagship_09": {
+      "type": "sv-flagship-09",
+      "settings": {}
+    },
+    "flagship_10a": {
+      "type": "sv-flagship-10a",
+      "settings": {}
+    },
+    "flagship_10b": {
+      "type": "sv-flagship-10b",
+      "settings": {}
+    },
+    "flagship_11": {
+      "type": "sv-flagship-11",
+      "settings": {}
+    },
+    "flagship_12": {
+      "type": "sv-flagship-12",
+      "settings": {}
+    },
+    "flagship_13": {
+      "type": "sv-flagship-13",
+      "settings": {}
+    },
+    "flagship_14": {
+      "type": "sv-flagship-14",
+      "settings": {}
+    },
+    "story_01": {
+      "type": "sv-story-01",
+      "settings": {}
+    },
+    "story_02": {
+      "type": "sv-story-02",
+      "settings": {}
+    },
+    "story_03": {
+      "type": "sv-story-03",
+      "settings": {}
+    },
+    "story_04": {
+      "type": "sv-story-04",
+      "settings": {}
+    },
+    "story_05": {
+      "type": "sv-story-05",
+      "settings": {}
+    },
+    "story_06": {
+      "type": "sv-story-06",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "flagship_01",
+    "flagship_02a",
+    "flagship_02b",
+    "flagship_03",
+    "flagship_04",
+    "flagship_05",
+    "flagship_06",
+    "flagship_07",
+    "flagship_08",
+    "flagship_09",
+    "flagship_10a",
+    "flagship_10b",
+    "flagship_11",
+    "flagship_12",
+    "flagship_13",
+    "flagship_14",
+    "story_01",
+    "story_02",
+    "story_03",
+    "story_04",
+    "story_05",
+    "story_06"
+  ]
+}

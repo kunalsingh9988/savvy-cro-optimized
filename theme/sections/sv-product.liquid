@@ -1,0 +1,222 @@
+{% comment %}
+  Section contract.
+  Savvy native product detail page (non-flagship products). Renders breadcrumbs,
+  media gallery, purchase options (quantity, plan, add-to-cart), flavor list,
+  accordions, FAQ and related products — wired to the real product object.
+  The flagship handle renders the generated design stack instead (sv-flagship-*).
+  @example templates/product.json — first section.
+{% endcomment %}
+
+{% liquid
+  assign flagship = section.settings.flagship_handle
+  if product.handle == flagship
+    assign is_flagship = true
+  endif
+  assign pc_handles = product.collections | map: 'handle'
+  assign is_protein = false
+  if pc_handles contains 'protein-coffee'
+    assign is_protein = true
+  endif
+  assign first_collection = product.collections | first
+  assign current_variant = product.selected_or_first_available_variant
+%}
+
+{% unless is_flagship %}
+<div class="native-page product-detail">
+  <div class="content-container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span aria-hidden="true">›</span>
+      {%- if first_collection -%}
+        <a href="{{ first_collection.url }}">{{ first_collection.title }}</a>
+        <span aria-hidden="true">›</span>
+      {%- endif -%}
+      <span aria-current="page">{{ product.title }}</span>
+    </nav>
+
+    <div class="product-top">
+      <div class="product-heading">
+        <h1>{{ product.title }}</h1>
+        {% if first_collection %}<p>{{ first_collection.title }}</p>{% endif %}
+      </div>
+
+      <div class="product-gallery">
+        <button class="product-main-photo{% if first_collection %} tone-{{ first_collection.handle }}{% endif %}" type="button" data-sv-zoom aria-expanded="false" aria-label="Toggle enlarged image of {{ product.title | escape }}">
+          {%- if product.featured_media -%}
+            <img src="{{ product.featured_media | image_url: width: 1400 }}" alt="{{ product.featured_media.alt | default: product.title | escape }}" data-sv-main-photo fetchpriority="high" width="1400" height="1400">
+          {%- else -%}
+            <img src="{{ 'savvy-product-hero.webp' | asset_url }}" alt="{{ product.title | escape }}" data-sv-main-photo width="1254" height="1254">
+          {%- endif -%}
+          <span class="photo-instruction" data-sv-zoom-label>Click to enlarge</span>
+        </button>
+        <div class="product-enlarged" hidden data-sv-enlarged>
+          {%- if product.featured_media -%}
+            <img src="{{ product.featured_media | image_url: width: 2400 }}" alt="Enlarged {{ product.title | escape }}" width="{{ product.featured_media.preview_image.width | default: 2400 }}" height="{{ product.featured_media.preview_image.height | default: 2400 }}">
+          {%- else -%}
+            <img src="{{ 'savvy-product-hero.webp' | asset_url }}" alt="Enlarged {{ product.title | escape }}" width="1254" height="1254">
+          {%- endif -%}
+          <button class="native-text-button" type="button" data-sv-zoom-close>Close enlarged image</button>
+        </div>
+        {%- if product.media.size > 1 -%}
+          <div class="sv-media-thumbs" role="listbox" aria-label="Product images">
+            {%- for media in product.media limit: 8 -%}
+              <button type="button" data-sv-thumb="{{ media | image_url: width: 1400 }}" aria-label="View image {{ forloop.index }}">
+                <img src="{{ media | image_url: width: 160 }}" alt="" loading="lazy" width="80" height="80">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+        <p class="image-caption">{{ product.title }}</p>
+      </div>
+
+      <div class="product-purchase">
+        <h1 class="product-title-desktop">{{ product.title }}</h1>
+        {% if first_collection %}<p class="product-category">{{ first_collection.title }}</p>{% endif %}
+        <div class="product-description">{{ product.description | default: '' }}</div>
+
+        <section class="purchase-options" id="purchase-plan" aria-label="Purchase options">
+          <div class="product-price">
+            <span data-sv-price>{{ current_variant.price | money }}</span>
+            {%- if current_variant.compare_at_price > current_variant.price -%}
+              <s style="font-size:.6em;color:#7d7a9d">{{ current_variant.compare_at_price | money }}</s>
+            {%- endif -%}
+            {% unless product.available == false %}<small> / each</small>{% endunless %}
+          </div>
+
+          {%- if product.has_only_default_variant == false -%}
+            {%- for option in product.options_with_values -%}
+              <div class="product-quantity" style="justify-content:flex-start;gap:14px">
+                <label for="sv-opt-{{ section.id }}-{{ forloop.index }}" style="font-family:'filson-pro:Bold'">{{ option.name }}</label>
+                <select id="sv-opt-{{ section.id }}-{{ forloop.index }}" data-sv-option="{{ option.position }}" class="catalog-toolbar" style="border:1px solid #d9d6e5;background:white;min-height:48px;border-radius:8px;padding:10px 14px;font:16px 'filson-pro:Regular'">
+                  {%- for value in option.values -%}
+                    <option value="{{ value | escape }}"{% if option.selected_value == value %} selected{% endif %}>{{ value }}</option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+
+          <script type="application/json" data-sv-variants>{{ product.variants | json }}</script>
+          <form data-sv-atc action="{{ routes.cart_add_url }}" method="post">
+            <input type="hidden" name="id" value="{{ current_variant.id }}" data-sv-variant-id>
+            <input type="hidden" name="selling_plan" value="" data-sv-selling-plan>
+            <input type="hidden" name="quantity" value="1" data-sv-qty-input>
+
+            <div class="product-quantity">
+              <label for="product-qty-{{ section.id }}">Quantity</label>
+              <div>
+                <button type="button" data-sv-qty="-1" aria-label="Decrease quantity">−</button>
+                <input id="product-qty-{{ section.id }}" type="text" inputmode="numeric" value="1" data-sv-qty-display aria-label="Quantity">
+                <button type="button" data-sv-qty="1" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+
+            {%- if product.selling_plan_groups.size > 0 -%}
+              <fieldset class="product-plans">
+                <legend>Purchase plan</legend>
+                <label class="selected" data-sv-plan>
+                  <input type="radio" name="sv-plan" value="subscription" checked>
+                  <span>
+                    <strong>Subscribe &amp; Save</strong>
+                    <small>{{ product.selling_plan_groups[0].name | default: 'Every 30 days' }}</small>
+                  </span>
+                  <b>{{ current_variant.price | money }}/ea</b>
+                </label>
+                <label data-sv-plan>
+                  <input type="radio" name="sv-plan" value="once">
+                  <span>
+                    <strong>One-time Purchase</strong>
+                  </span>
+                  <b>{{ current_variant.price | money }}/ea</b>
+                </label>
+              </fieldset>
+              <input type="hidden" data-sv-plan-json value="{{ product.selling_plan_groups[0].selling_plans[0].id | default: '' }}">
+            {%- endif -%}
+
+            <button class="native-button product-add" type="submit"{% unless product.available %} disabled{% endunless %} data-sv-atc-label>
+              {%- if product.available %}Add to cart — {{ current_variant.price | money }}{% else %}Sold out{% endif -%}
+            </button>
+            {%- unless product.available -%}
+              <p class="availability-note">This product is currently sold out.</p>
+            {%- endunless -%}
+          </form>
+
+          {%- if is_protein -%}
+            <p class="mixed-bundle"><a href="{{ all_products['protein-coffee'].url | default: '/products/protein-coffee' }}">Mix flavors in the Protein Coffee bundle builder →</a></p>
+          {%- endif -%}
+        </section>
+
+        <details class="product-info-detail">
+          <summary>Product details</summary>
+          <p>{{ product.description | strip_html | truncate: 800 }}</p>
+        </details>
+        <details class="product-info-detail">
+          <summary>{% if first_collection.handle == 'accessories' %}Care information{% else %}Ingredients &amp; nutritional information{% endif %}</summary>
+          <p>Refer to the product packaging for complete ingredients, nutrition, preparation and care information.</p>
+        </details>
+      </div>
+    </div>
+
+    {%- if first_collection and first_collection.products.size > 1 -%}
+      <section class="flavor-section">
+        <h2>{% if first_collection.handle == 'accessories' %}Explore more essentials{% else %}Find your favorite flavor{% endif %}</h2>
+        <div class="flavor-list">
+          {%- for sibling in first_collection.products limit: 16 -%}
+            <a href="{{ sibling.url }}"{% if sibling.handle == product.handle %} aria-current="page"{% endif %}>
+              {%- if sibling.featured_image -%}
+                <img src="{{ sibling.featured_image | image_url: width: 128 }}" alt="" loading="lazy" width="64" height="64">
+              {%- endif -%}
+              <span>
+                {{ sibling.title }}
+                {%- unless sibling.available -%}<small>Sold out</small>{%- endunless -%}
+              </span>
+            </a>
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+
+    <section class="native-faq">
+      <h2>Frequently asked questions</h2>
+      {%- if is_protein -%}
+        <details><summary>What is Protein Coffee?</summary><p>Savvy Protein Coffee combines real coffee with premium whey protein, prebiotics and MCTs. Customize your favorite iced coffee while working toward your protein goals.</p></details>
+        <details><summary>Is this product dairy free?</summary><p>Protein Coffee contains whey protein, which is derived from milk. Check the packaging for the complete ingredient and allergen information.</p></details>
+        <details><summary>How do I prepare it?</summary><p>Mix into your favorite iced coffee, stir or shake, and enjoy. Follow the instructions on the packaging for your chosen flavor.</p></details>
+        <details><summary>Where can I find ingredients and nutrition?</summary><p>Please check your selected flavor’s packaging for its ingredients, nutrition information, preparation instructions and best-by date.</p></details>
+      {%- elsif first_collection.handle == 'accessories' -%}
+        <details><summary>Where can I find dimensions and materials?</summary><p>Refer to this product’s description and packaging for the available dimensions, materials and included components.</p></details>
+        <details><summary>How should I care for it?</summary><p>Follow the care instructions supplied with the product. Contact Savvy support if those instructions are missing.</p></details>
+        <details><summary>Is this item currently available?</summary><p>The purchase button above reflects the current Shopify inventory status.</p></details>
+      {%- else -%}
+        <details><summary>How do I prepare this product?</summary><p>Follow the preparation directions on the selected product’s packaging.</p></details>
+        <details><summary>Where can I find ingredients and allergens?</summary><p>Refer to the product packaging for complete ingredients, allergen and nutrition information.</p></details>
+        <details><summary>Is this product currently available?</summary><p>The purchase button above reflects the current Shopify inventory status.</p></details>
+      {%- endif -%}
+    </section>
+
+    {%- if first_collection and first_collection.products.size > 1 -%}
+      <section class="related-products">
+        <h2>You may also like</h2>
+        <div class="catalog-grid">
+          {%- assign shown = 0 -%}
+          {%- for sibling in first_collection.products -%}
+            {%- if sibling.handle != product.handle and shown < 4 -%}
+              {%- assign shown = shown | plus: 1 -%}
+              {% render 'sv-product-card', product: sibling %}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+  </div>
+</div>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "SV Product",
+  "settings": [
+    { "type": "text", "id": "flagship_handle", "label": "Flagship product handle", "default": "protein-coffee" }
+  ]
+}
+{% endschema %}

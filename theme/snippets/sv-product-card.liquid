@@ -1,0 +1,33 @@
+{% comment %}
+  Savvy catalog card: tinted photo, name, price, add-to-cart button.
+  @param product - {product} required
+  @param [tone] - {string} category tone class suffix
+{% endcomment %}
+
+<article class="catalog-card">
+  <a href="{{ product.url }}" class="catalog-photo{% if tone %} tone-{{ tone }}{% endif %}">
+    {%- if product.featured_image -%}
+      <img src="{{ product.featured_image | image_url: width: 528 }}" alt="{{ product.title | escape }}" loading="lazy" width="528" height="528">
+    {%- endif -%}
+    {%- if product.compare_at_price > product.price -%}
+      <span>SALE</span>
+    {%- endif -%}
+  </a>
+  <a href="{{ product.url }}" class="catalog-name">{{ product.title }}</a>
+  <p class="catalog-price">
+    {%- if product.available == false -%}
+      Sold out
+    {%- else -%}
+      {{ product.price | money }}{% if product.requires_selling_plan %} / subscription{% endif %}
+    {%- endif -%}
+  </p>
+  <button
+    class="catalog-add"
+    type="button"
+    {% unless product.available %}disabled{% endunless %}
+    data-sv-add="{{ product.selected_or_first_available_variant.id | default: '' }}"
+    data-sv-name="{{ product.title | escape }}"
+  >
+    {%- if product.available %}Add + {{ product.price | money }}{% else %}Sold out{% endif -%}
+  </button>
+</article>

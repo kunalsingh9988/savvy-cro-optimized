@@ -1,0 +1,65 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "collection_01": {
+      "type": "sv-collection-01",
+      "settings": {}
+    },
+    "collection_02a": {
+      "type": "sv-collection-02a",
+      "settings": {}
+    },
+    "collection_02b": {
+      "type": "sv-collection-02b",
+      "settings": {}
+    },
+    "collection_03": {
+      "type": "sv-collection-03",
+      "settings": {}
+    },
+    "collection_04a": {
+      "type": "sv-collection-04a",
+      "settings": {}
+    },
+    "collection_04b": {
+      "type": "sv-collection-04b",
+      "settings": {}
+    },
+    "collection_05": {
+      "type": "sv-collection-05",
+      "settings": {}
+    },
+    "collection_06": {
+      "type": "sv-collection-06",
+      "settings": {}
+    },
+    "collection_07": {
+      "type": "sv-collection-07",
+      "settings": {}
+    },
+    "main": {
+      "type": "sv-collection",
+      "settings": {}
+    }
+  },
+  "order": [
+    "collection_01",
+    "collection_02a",
+    "collection_02b",
+    "collection_03",
+    "collection_04a",
+    "collection_04b",
+    "collection_05",
+    "collection_06",
+    "collection_07",
+    "main"
+  ]
+}

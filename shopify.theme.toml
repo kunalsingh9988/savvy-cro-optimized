@@ -1,0 +1,4 @@
+[environments.staging]
+store = "savvy-8mvrp1ew.myshopify.com"
+theme = "189974675680"
+path = "theme"

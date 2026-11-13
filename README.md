@@ -47,3 +47,15 @@ See [ASSET_NOTES.md](ASSET_NOTES.md) for the image editing process and outputs.
 The page shell and promotional backgrounds fill the viewport. The homepage hero, social section and shared footer use native responsive layouts in `src/responsive.jsx` and `src/responsive.css`; the footer stacks into a two-column link grid on smaller screens. Exported sections retain their design geometry inside fluid content containers, capped at 1920px for readability. Collection content uses a wider 1760px container. The header keeps a readable navigation size independently of page scaling.
 
 Optional catalog preparation scripts (`extract-catalog.mjs`, `build-catalog.mjs`, `prepare-product-details.mjs`) use ignored design-reference inputs. Normal builds use the committed catalog and image files and need no Figma connection or image-generation credentials.
+
+## Shopify theme
+
+The storefront is also packaged as a Shopify Online Store 2.0 theme in `theme/`. It uses Shopify products, variants, selling plans, inventory, cart, customer accounts, search, contact forms, newsletter forms and policy URLs while preserving the supplied desktop/mobile design sections.
+
+```sh
+npm run theme:build
+npm run theme:qa
+shopify theme check --path theme
+```
+
+The configured `staging` environment targets only the unpublished theme `Savvy - Official - Kunal` (`189974675680`) on `savvy-8mvrp1ew.myshopify.com`. See [SHOPIFY.md](SHOPIFY.md) for route/resource requirements and deployment evidence.

@@ -1,0 +1,112 @@
+{% comment %}
+  Section contract.
+  Savvy Journal landing (/blogs/coffee): editorial cards with the article bodies
+  inlined below — content ships with the theme so the page is complete before
+  merchant-authored articles exist. Other blogs fall back to the standard
+  article list.
+  @example templates/blog.json
+{% endcomment %}
+
+{% if blog.handle == 'coffee' %}
+<div class="native-page">
+  <div class="content-page-intro">
+    <a href="{{ routes.root_url }}">Savvy</a>
+    <h1>{{ blog.title | default: 'The Savvy Journal' }}</h1>
+    <p>Ideas for a coffee routine that feels like you.</p>
+  </div>
+  <div class="content-container content-body">
+    {%- assign articles_data = 'Find your everyday coffee ritual,54a738da-4d20-4616-a0f6-e13360f35005.png,Start with how you like to drink your coffee, then make it your own.|A simple guide to iced coffee at home,014efa88-9cc0-4bed-8c54-4c93f2d1e781.png,A glass, ice and a few thoughtful choices can make your coffee routine easier.|Make room for your coffee essentials,ff264cbf-e8a1-4fbf-8fbb-c88492082d73.png,Keep the tools you use regularly close at hand.' | split: '|' -%}
+    <div class="editorial-grid">
+      {%- for a in articles_data -%}
+        {%- assign ap = a | split: ',' -%}
+        <article class="editorial-card">
+          <a href="#article-{{ forloop.index }}"><img src="{{ ap[1] | asset_url }}" alt="{{ ap[0] }}" loading="lazy" width="550" height="550"><h2>{{ ap[0] }}</h2></a>
+          <p>{{ ap[2] }}</p>
+          <a class="native-text-button" href="#article-{{ forloop.index }}">Read article →</a>
+        </article>
+      {%- endfor -%}
+    </div>
+    <div class="prose" style="margin-top:64px">
+      <section id="article-1">
+        <h2>Find your everyday coffee ritual</h2>
+        <p>Start with how you like to drink your coffee, then make it your own.</p>
+        <h3>Start with your mixer</h3>
+        <p>Think about the drinks you already enjoy. Water, dairy milk and plant-based alternatives create different textures. Check your chosen product’s preparation instructions before mixing.</p>
+        <h3>Choose your flavor</h3>
+        <p>Explore familiar flavors first, or browse the collection for something different. Each product page shows the selected flavor and its listed price.</p>
+        <h3>Build your routine</h3>
+        <p>Keep your preferred glass and measuring tools together. Follow the label’s serving guidance so you can repeat the drink you enjoy.</p>
+        <a class="native-button inline-button" href="{{ routes.all_products_collection_url }}">Keep exploring</a>
+      </section>
+      <section id="article-2">
+        <h2>A simple guide to iced coffee at home</h2>
+        <p>A glass, ice and a few thoughtful choices can make your coffee routine easier.</p>
+        <h3>Begin with the label</h3>
+        <p>Your selected product’s packaging is the source for serving sizes, mixing directions, ingredients and allergens. Different products may have different instructions.</p>
+        <h3>Mix before you finish</h3>
+        <p>Combine your coffee with your preferred mixer as directed. Add ice when it suits the preparation method. Stir until evenly mixed.</p>
+        <h3>Change one thing at a time</h3>
+        <p>Try a different mixer or flavor and note what you enjoy. Keep the rest of your recipe consistent while you explore.</p>
+        <a class="native-button inline-button" href="/pages/recipes#recipe-1">Keep exploring</a>
+      </section>
+      <section id="article-3">
+        <h2>Make room for your coffee essentials</h2>
+        <p>Keep the tools you use regularly close at hand.</p>
+        <h3>Choose what you use</h3>
+        <p>Start with a glass or tumbler and a way to measure and mix. Add accessories when they make your routine easier.</p>
+        <h3>Follow the care guide</h3>
+        <p>Use the care instructions supplied with each accessory. Do not assume a product is dishwasher or microwave safe unless its instructions confirm it.</p>
+        <h3>Keep it simple</h3>
+        <p>Clean your tools after use, allow them to dry and store them according to their instructions.</p>
+        <a class="native-button inline-button" href="{{ collections['accessories'].url | default: routes.collections_url }}">Keep exploring</a>
+      </section>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="native-page">
+  <div class="content-page-intro">
+    <a href="{{ routes.root_url }}">Savvy</a>
+    <h1>{{ blog.title }}</h1>
+    {% if blog.all_tags.size > 0 %}<p>{{ blog.all_tags | join: ', ' }}</p>{% endif %}
+  </div>
+  <div class="content-container content-body">
+    {%- paginate blog.articles by 12 -%}
+      {%- if blog.articles.size > 0 -%}
+        <div class="editorial-grid">
+          {%- for article in blog.articles -%}
+            <article class="editorial-card">
+              <a href="{{ article.url }}">
+                {%- if article.image -%}<img src="{{ article.image | image_url: width: 550 }}" alt="{{ article.title | escape }}" loading="lazy" width="550" height="550">{%- endif -%}
+                <h2>{{ article.title }}</h2>
+              </a>
+              <p>{{ article.excerpt_or_content | strip_html | truncate: 140 }}</p>
+              <a class="native-text-button" href="{{ article.url }}">Read article →</a>
+            </article>
+          {%- endfor -%}
+        </div>
+        {%- if paginate.pages > 1 -%}
+          <nav class="sv-pagination" aria-label="Pagination">
+            {%- if paginate.previous -%}<a class="native-button inline-button" href="{{ paginate.previous.url }}">← Previous</a>{%- endif -%}
+            <span>Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+            {%- if paginate.next -%}<a class="native-button inline-button" href="{{ paginate.next.url }}">Next →</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="empty-results">
+          <h2>No articles yet</h2>
+          <p>Stories and guides will be published here soon.</p>
+          <a class="native-button inline-button" href="/pages/recipes">Explore recipes</a>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "SV Blog",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,80 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "sv-hero",
+      "settings": {}
+    },
+    "home_01": {
+      "type": "sv-home-01",
+      "settings": {}
+    },
+    "home_02a": {
+      "type": "sv-home-02a",
+      "settings": {}
+    },
+    "home_02b": {
+      "type": "sv-home-02b",
+      "settings": {}
+    },
+    "home_03": {
+      "type": "sv-home-03",
+      "settings": {}
+    },
+    "home_04": {
+      "type": "sv-home-04",
+      "settings": {}
+    },
+    "home_05": {
+      "type": "sv-home-05",
+      "settings": {}
+    },
+    "home_06": {
+      "type": "sv-home-06",
+      "settings": {}
+    },
+    "home_07": {
+      "type": "sv-home-07",
+      "settings": {}
+    },
+    "home_08": {
+      "type": "sv-home-08",
+      "settings": {}
+    },
+    "home_09": {
+      "type": "sv-home-09",
+      "settings": {}
+    },
+    "home_10": {
+      "type": "sv-home-10",
+      "settings": {}
+    },
+    "social": {
+      "type": "sv-social",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "home_01",
+    "home_02a",
+    "home_02b",
+    "home_03",
+    "home_04",
+    "home_05",
+    "home_06",
+    "home_07",
+    "home_08",
+    "home_09",
+    "home_10",
+    "social"
+  ]
+}
