@@ -3,4 +3,6 @@ node_modules
 dist
 design-reference
 qa
+theme
+shopify.theme.toml
 .DS_Store
